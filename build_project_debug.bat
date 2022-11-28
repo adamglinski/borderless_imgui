@@ -1,0 +1,1 @@
+msbuild -noLogo /p:OutputPath=build\bin /p:Configuration=Debug /p:Platform=x64 .\build\imgui_external.sln
