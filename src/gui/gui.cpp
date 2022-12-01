@@ -5,6 +5,8 @@
 #include "../../ext/imgui/imgui_impl_dx9.h"
 #include "../../ext/imgui/imgui_impl_win32.h"
 
+#include <dwmapi.h>
+
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND window, UINT msg, WPARAM wParam, LPARAM lParam);
 
 long __stdcall window_process(HWND window, UINT msg, WPARAM wParam, LPARAM lParam) {
@@ -68,7 +70,7 @@ void gui::create_window(const wchar_t* window_name) noexcept{
 	RegisterClassEx(&gui::window_class);
 
 	window = CreateWindowEx(
-		0,
+		WS_EX_TRANSPARENT,
 		L"class001",
 		window_name,
 		WS_POPUP,
@@ -81,6 +83,9 @@ void gui::create_window(const wchar_t* window_name) noexcept{
 		gui::window_class.hInstance,
 		0
 	);
+
+	MARGINS m = {-1};
+	DwmExtendFrameIntoClientArea(window, &m);
 
 	ShowWindow(window, SW_SHOWDEFAULT);
 	UpdateWindow(window);
@@ -101,7 +106,7 @@ bool gui::create_device() noexcept{
 
 	present_params.Windowed = TRUE;
 	present_params.SwapEffect = D3DSWAPEFFECT_DISCARD;
-	present_params.BackBufferFormat = D3DFMT_UNKNOWN;
+	present_params.BackBufferFormat = D3DFMT_A8R8G8B8;
 	present_params.EnableAutoDepthStencil = TRUE;
 	present_params.AutoDepthStencilFormat = D3DFMT_D16;
 	present_params.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
@@ -150,6 +155,8 @@ void gui::create_imgui() noexcept{
 
 	io.IniFilename = NULL;
 
+	ImGui::GetStyle().WindowRounding = 5.0f;
+
 	ImGui::StyleColorsDark();
 
 	ImGui_ImplWin32_Init(window);
@@ -190,7 +197,7 @@ void gui::end_render() noexcept{
 	device->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 	device->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
 
-	device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_RGBA(0, 0, 0, 255), 1.0f, 0);
+	device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_RGBA(0, 0, 0, 0), 1.0f, 0);
 
 	if (device->BeginScene() >= 0)
 	{
