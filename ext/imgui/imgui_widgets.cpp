@@ -710,7 +710,8 @@ bool ImGui::ButtonEx(const char* label, const ImVec2& size_arg, ImGuiButtonFlags
     // Render
     const ImU32 col = GetColorU32((held && hovered) ? ImGuiCol_ButtonActive : hovered ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
     RenderNavHighlight(bb, id);
-    RenderFrame(bb.Min, bb.Max, col, true, style.FrameRounding);
+    //RenderFrame(bb.Min, bb.Max, col, true, style.FrameRounding);
+    window->DrawList->AddRectFilled(bb.Min, bb.Max, col, stle.FrameRounding, 0);
 
     if (g.LogEnabled)
         LogSetNextTextDecoration("[", "]");
